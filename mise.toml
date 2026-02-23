@@ -12,7 +12,11 @@ elif [ -f go.mod ]; then
 elif [ -f requirements.txt ]; then
     pip install -r requirements.txt
 elif [ -f shell.nix ]; then
-    echo "Nix shell detected. Use 'nix-shell' for development environment."
+    if command -v nix-shell >/dev/null 2>&1; then
+        nix-shell --run "echo 'Nix environment prepared'"
+    else
+        echo "Warning: shell.nix found but nix-shell not installed"
+    fi
 else
     echo "No package manager detected."
 fi

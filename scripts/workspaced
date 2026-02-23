@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+# Automatically enter nix-shell if available and not already inside one
+if [ -f shell.nix ] && [ -z "$IN_NIX_SHELL" ] && command -v nix-shell >/dev/null 2>&1; then
+    echo "Entering nix-shell..."
+    exec nix-shell --run "$0 $@"
+fi
+
 COMMAND=$1
 SUBCOMMAND=$2
 
