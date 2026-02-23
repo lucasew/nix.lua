@@ -23,7 +23,13 @@ if [ "$COMMAND" = "codebase" ]; then
     if [ "$SUBCOMMAND" = "lint" ]; then
         echo "Running lint check..."
         if has_tool clang-tidy; then
-            find . -name "*.cc" -o -name "*.hh" 2>/dev/null | xargs -r clang-tidy
+            FILES=$(find . -name "*.cc" -o -name "*.hh" 2>/dev/null || true)
+            if [ -n "$FILES" ]; then
+                # shellcheck disable=SC2086
+                clang-tidy $FILES -- $NIX_CFLAGS_COMPILE
+            else
+                echo "No source files found."
+            fi
         else
             echo "Error: clang-tidy not found."
             exit 1
@@ -31,7 +37,13 @@ if [ "$COMMAND" = "codebase" ]; then
     elif [ "$SUBCOMMAND" = "format" ]; then
         echo "Running format check..."
         if has_tool clang-format; then
-            find . -name "*.cc" -o -name "*.hh" 2>/dev/null | xargs -r clang-format -i
+            FILES=$(find . -name "*.cc" -o -name "*.hh" 2>/dev/null || true)
+            if [ -n "$FILES" ]; then
+                # shellcheck disable=SC2086
+                clang-format -i $FILES
+            else
+                echo "No source files found."
+            fi
         else
             echo "Error: clang-format not found."
             exit 1
