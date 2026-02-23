@@ -1,0 +1,35 @@
+[tools]
+
+[tasks.install]
+run = """
+mise install
+if [ -f package.json ]; then
+    npm install
+elif [ -f Cargo.toml ]; then
+    cargo fetch
+elif [ -f go.mod ]; then
+    go mod download
+elif [ -f requirements.txt ]; then
+    pip install -r requirements.txt
+elif [ -f shell.nix ]; then
+    echo "Nix shell detected. Use 'nix-shell' for development environment."
+else
+    echo "No package manager detected."
+fi
+"""
+
+[tasks.lint]
+run = "PATH=$PWD/scripts:$PATH workspaced codebase lint"
+
+[tasks.fmt]
+run = "PATH=$PWD/scripts:$PATH workspaced codebase format"
+
+[tasks.test]
+run = "echo 'No tests configured'"
+
+[tasks.codegen]
+run = "echo 'No codegen'"
+
+[tasks.ci]
+depends = ["lint", "test"]
+run = "true"

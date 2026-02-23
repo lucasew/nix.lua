@@ -1,0 +1,35 @@
+#!/bin/bash
+set -e
+
+COMMAND=$1
+SUBCOMMAND=$2
+
+has_tool() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+if [ "$COMMAND" = "codebase" ]; then
+    if [ "$SUBCOMMAND" = "lint" ]; then
+        echo "Running lint check..."
+        if has_tool clang-tidy; then
+            find . -name "*.cc" -o -name "*.hh" 2>/dev/null | xargs -r clang-tidy
+        else
+            echo "Error: clang-tidy not found."
+            exit 1
+        fi
+    elif [ "$SUBCOMMAND" = "format" ]; then
+        echo "Running format check..."
+        if has_tool clang-format; then
+            find . -name "*.cc" -o -name "*.hh" 2>/dev/null | xargs -r clang-format -i
+        else
+            echo "Error: clang-format not found."
+            exit 1
+        fi
+    else
+        echo "Unknown subcommand: $SUBCOMMAND"
+        exit 1
+    fi
+else
+    echo "Unknown command: $COMMAND"
+    exit 1
+fi
