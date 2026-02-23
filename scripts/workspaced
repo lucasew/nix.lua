@@ -25,6 +25,7 @@ if [ "$COMMAND" = "codebase" ]; then
         if has_tool clang-tidy; then
             FILES=$(find . -name "*.cc" -o -name "*.hh" 2>/dev/null || true)
             if [ -n "$FILES" ]; then
+                echo "NIX_CFLAGS_COMPILE: $NIX_CFLAGS_COMPILE"
                 # shellcheck disable=SC2086
                 clang-tidy $FILES -- $NIX_CFLAGS_COMPILE
             else
